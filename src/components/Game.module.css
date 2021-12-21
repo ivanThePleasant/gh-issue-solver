@@ -1,0 +1,10 @@
+.game {
+  width: 1300px;
+  height: 866px;
+  position: relative;
+}
+
+.background {
+  width: 100%;
+  height: auto;
+} 

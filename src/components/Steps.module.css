@@ -1,0 +1,25 @@
+.container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 450px;
+  height: 210px;
+  
+}
+
+.steps {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.step {
+  border: 4px solid black;
+  width: 60px;
+  height: 60px;
+  margin: 5px;
+}
+
+.selected {
+  border: 5px dashed red
+}
