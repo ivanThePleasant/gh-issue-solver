@@ -38,6 +38,9 @@ const Steps = ({ steps, selectedStep }) => {
           </div>
         ))}
       </div>
+      <div className={styles.info}>
+        {steps[selectedStep] && steps[selectedStep].name}
+      </div>
     </div>
   );
 }

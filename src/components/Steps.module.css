@@ -7,6 +7,13 @@
   
 }
 
+.info {
+  font-size: 32px;
+  text-align: center;
+  color: white;
+  filter: drop-shadow(-1px 1px 1px red)
+}
+
 .steps {
   display: flex;
   flex-direction: row;

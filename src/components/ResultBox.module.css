@@ -1,0 +1,11 @@
+.result {
+  position: absolute;
+  left: 479px;
+  top: 325px;
+  width: 273px;
+  height: 216px;
+  color: black;
+  padding: 10px;
+  background: white;
+  text-align: center;
+}

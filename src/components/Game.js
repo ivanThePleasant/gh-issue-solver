@@ -4,6 +4,9 @@ import Steps from "./Steps";
 
 import styles from './Game.module.css'
 import bg from '../assets/bg.gif'
+import IssueBox from "./IssueBox";
+import ScoreBox from "./GameInfoBox";
+import ResultBox from "./ResultBox";
 
 const fixes = [
   {
@@ -88,6 +91,17 @@ const getNewIssue = () => {
 }
 
 const Game = () => {
+  const [gameOver, setGameOver] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [gameEnd, setGameEnd] = useState(new Date());
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [score, setScore] = useState(0);
+  const [badFix, setBadFix] = useState(false);
+  const [currentIssue, setCurrentIssue] = useState([
+    {
+      name: "NO ISSUE YET",
+    },
+  ]);
   const [selectedStep, setSelectedStep] = useState(-1)
   const [currentSteps, setCurrentSteps] = useState([]);
 
@@ -95,8 +109,18 @@ const Game = () => {
 
   useEffect(() => {
     const listener = (event) => {
-      
-      
+      if (!started || gameOver) {
+        if (event.key === " ") {
+          setScore(0);
+          setGameOver(false);
+          setStarted(true);
+          setSelectedStep(0);
+          setCurrentIssue(getNewIssue());
+          setGameEnd(Date.now() + 62 * 1000);
+          setSecondsLeft(62);
+        }
+      }
+      if (started) {
         if (event.key === "ArrowRight") {
           setSelectedStep((prevValue) => {
             const nextIndex = prevValue + 1;
@@ -110,7 +134,7 @@ const Game = () => {
         } else if (event.key === "ArrowUp") {
           setSelectedStep((prevValue) => {
             const nextIndex = prevValue - 6;
-            return nextIndex < 0 ? prevValue + 6  : nextIndex;
+            return nextIndex < 0 ? prevValue + 6 : nextIndex;
           });
         } else if (event.key === "ArrowDown") {
           setSelectedStep((prevValue) => {
@@ -126,22 +150,87 @@ const Game = () => {
             },
           ]);
         }
-      
+      }
     };
-    
-    document.addEventListener("keydown", listener);
-    
+
+    if (!badFix) {
+      document.addEventListener("keydown", listener);
+    }
+
     return () => {
       document.removeEventListener("keydown", listener);
     };
-  }, []);
+  }, [gameOver, started, badFix, selectedStep]);
+
+  useEffect(() => {
+    if (currentSteps.length) {
+      for (let i = 0; i < currentSteps.length; i++) {
+        if (currentIssue[i].name !== currentSteps[i].name) {
+          setTimeout(() => {
+            setBadFix(false);
+            setCurrentSteps([]);
+          }, 2000);
+          setScore((prevValue) => prevValue - currentIssue.length);
+          setGameEnd((prevValue) => prevValue - currentIssue.length * 1000);
+          return setBadFix(true);
+        }
+      }
+      if (currentSteps.length === currentIssue.length) {
+        setTimeout(() => {
+          if (!gameOver) {
+            setScore((prevValue) => prevValue + currentIssue.length);
+            setBadFix(false);
+            setCurrentSteps([]);
+            setCurrentIssue(getNewIssue());
+          }
+        }, 1000);
+        
+        return setBadFix(true);
+      }
+    }
+  }, [currentIssue, gameOver, currentSteps]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      let seconds = Math.round((gameEnd - Date.now()) / 1000);
+      if (seconds <= 0) {
+        seconds = 0;
+        if (started) {
+          clearInterval(intervalId);
+          setGameOver(true);
+          setCurrentIssue([
+            {
+              name: "GAME OVER!",
+            },
+          ]);
+        }
+      }
+      setSecondsLeft(seconds);
+    }, 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [gameEnd, started]);
 
   return (
     <div className={styles.game}>
-      <img className={styles.background } src={bg} alt="background"/>
+      <img className={styles.background} src={bg} alt="background" />
       <Steps steps={fixes} selectedStep={selectedStep} />
+
+      {gameOver &&
+        <ResultBox score={score} />
+      }
+
+      {!gameOver &&
+        <IssueBox currentIssue={currentIssue} />
+      }
+
+      {started && !gameOver &&
+        <ScoreBox score={score} secondsLeft={secondsLeft}/>
+      }
+      
     </div>
-  )
+  );
 }
 
 export default Game
