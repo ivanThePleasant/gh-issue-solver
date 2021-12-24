@@ -2,14 +2,21 @@ import React from 'react'
 
 import styles from './IssueBox.module.css'
 
-const IssueBox = ({ currentIssue }) => {
+const IssueBox = ({ gameOver, steps, currentIssue }) => {
   return (
     <div className={styles.issue}>
       <h3>Current issue:</h3>
-      <br/>
+      <br />
       <ol>
         {currentIssue.map((step, index) => (
           <li key={index}>
+            {!gameOver &&
+            steps[index] &&
+            steps[index].name === step.name
+              ? "✅"
+              : steps.length > index
+              ? "❌"
+              : ""}
             {step.name}
           </li>
         ))}

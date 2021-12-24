@@ -22,9 +22,11 @@ library.add(
 
 const classNames = (...names) => names.join(' ')
 
-const Steps = ({ steps, selectedStep }) => {
+const Steps = ({ steps, selectedStep, badFix }) => {
   return (
-    <div className={classNames(styles.container)}>
+    <div
+      className={classNames(styles.container, badFix ? styles.disabled : "")}
+    >
       <div className={classNames(styles.steps)}>
         {steps.map((step, index) => (
           <div

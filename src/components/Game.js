@@ -215,18 +215,27 @@ const Game = () => {
   return (
     <div className={styles.game}>
       <img className={styles.background} src={bg} alt="background" />
-      <Steps steps={fixes} selectedStep={selectedStep} />
+      
+      {started && !gameOver &&
+        <Steps 
+          steps={fixes} 
+          badFix={badFix}
+          selectedStep={selectedStep} />
+      }
+
+      {started && !gameOver &&
+        <ScoreBox score={score} secondsLeft={secondsLeft}/>
+      }
 
       {gameOver &&
         <ResultBox score={score} />
       }
 
       {!gameOver &&
-        <IssueBox currentIssue={currentIssue} />
-      }
-
-      {started && !gameOver &&
-        <ScoreBox score={score} secondsLeft={secondsLeft}/>
+        <IssueBox 
+          currentIssue={currentIssue}
+          gameOver={gameOver}
+          steps={currentSteps} />
       }
       
     </div>
